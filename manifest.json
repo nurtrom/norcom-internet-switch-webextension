@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Norcom Internet Switch",
+  "version": "0.1.0",
+  "description": "",
+  "homepage_url": "https://github.com/nurtrom/norcom-internet-switch-webextension",
+  "icons": {
+    "48": "icons/norcom-internet-switch-48.png",
+    "96": "icons/norcom-internet-switch-96.png"
+  },
+
+  "permissions": [],
+
+  "browser_action": {
+    "default_icon": "icons/internet-disabled.png",
+    "default_title": "Включить интернет Norcom"
+  },
+
+  "background": {
+    "scripts": ["norcom-internet-switch.js"]
+  }
+}
