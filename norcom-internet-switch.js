@@ -1,3 +1,5 @@
+let browser = typeof window.browser === 'undefined' ? window.chrome : window.browser;
+
 const APP_NAME = 'Norcom Internet Switch';
 
 const STATE_ICONS = [
