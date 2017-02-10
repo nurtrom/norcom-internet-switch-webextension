@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Norcom Internet Switch",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "homepage_url": "https://github.com/nurtrom/norcom-internet-switch-webextension",
   "icons": {
@@ -10,7 +10,8 @@
   },
 
   "permissions": [
-    "notifications"
+    "notifications",
+    "*://www.norcom.ru/*"
   ],
 
   "browser_action": {

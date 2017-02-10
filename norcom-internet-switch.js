@@ -21,15 +21,13 @@ const STATE_CHANGE_NOTIFICATIONS = [
     {
         type: 'basic',
         iconUrl: browser.extension.getURL('icons/internet-disabled-96.png'),
-        title: APP_NAME,
-        message: 'Интернет выключен!'
+        title: APP_NAME
     },
 
     {
         type: 'basic',
         iconUrl: browser.extension.getURL('icons/internet-enabled-96.png'),
-        title: APP_NAME,
-        message: 'Интернет включен!'
+        title: APP_NAME
     }
 ];
 
@@ -47,8 +45,15 @@ function main() {
         }
 
         stateChangeTimeout = setTimeout(() => {
-            toggleInternet(state);
-            showNotification(state);
+            toggleInternet(state).then((res) => {
+                res.text().then((content) => {
+                    let message = parseMessage(content);
+
+                    showNotification(state, message);
+                });
+            });
+
+
         }, 500);
     });
 
@@ -80,8 +85,22 @@ function toggleInternet(state) {
     return fetch(req);
 }
 
-function showNotification(state) {
+function parseMessage(content) {
+    let matches = content.match(/<span[^>]*>(.*?)<\/span>/);
+
+    if (matches && matches[1]) {
+        let message = matches[1];
+
+        return message.replace(/(<([^>]+)>)/ig, '');
+    }
+
+    return null;
+}
+
+function showNotification(state, message) {
     var options = STATE_CHANGE_NOTIFICATIONS[state];
+    options.message = message;
+
     browser.notifications.create('norcom-internet-switch-notification', options);
 }
 
