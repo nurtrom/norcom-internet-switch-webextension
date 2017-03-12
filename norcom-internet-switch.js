@@ -11,18 +11,12 @@ const STATE_ICONS = [
     {
         19: 'icons/internet-disabled-19.png',
         38: 'icons/internet-disabled-38.png'
-    },
-
-    {
-        19: 'icons/internet-disabled-19.png',
-        38: 'icons/internet-disabled-38.png'
     }
 ];
 
 const STATE_TITLES = [
     'Выключить интернет Norcom',
-    'Включить интернет Norcom',
-    'Включить интернет Norcom',
+    'Включить интернет Norcom'
 ];
 
 const STATE_CHANGE_NOTIFICATIONS = [
@@ -47,15 +41,20 @@ const STATE_CHANGE_NOTIFICATIONS = [
 
 function main() {
     let stateChangeTimeout;
-    var state = 0;
+    let state = 1;
 
     /* Проверим текущее состояние подключения. Установим соответсвующую иконку и уведомим пользователя. */
     getCurrentState().then((res) => {
         res.text().then((content) => {
             let r = parseResponse(content);
-            updateView(r.state);
+
+            if (r.state == 2)
+                state = 1;
+            else
+                state = r.state;
+            
             showNotification(r.state, r.message);
-            state = r.state;
+            updateView(state);
         });
     });
     /* ================================================================================================ */
@@ -71,6 +70,11 @@ function main() {
             toggleInternet(state).then((res) => {
                 res.text().then((content) => {
                     let r = parseResponse(content);
+                    
+                    if (r.state == 2)
+                        state = 1;
+                    else
+                        state = r.state;
 
                     /* 
                         Сообщение и иконка теперь зависят от возвращаемого результата.
@@ -78,20 +82,11 @@ function main() {
                         или мы подключены к другой сети и кнопка нам недоступна.
                     */
                     showNotification(r.state, r.message);
-                    updateView(r.state);
-
-                    /* Обнуляет статус в случае ошибки. Нужно сделать красивее (: */
-                    if (r.state > 1) {
-                        state = 0;
-                    }
+                    updateView(state);
                 });
             });
-
-
         }, 500);
     });
-
-    updateView(state);
 }
 
 function updateView(state) {
@@ -120,6 +115,10 @@ function toggleInternet(state) {
 }
 
 function getCurrentState() {
+    /* 
+        При отправке -1 статус подключения не изменится, 
+        а в ответе будет указан текущий keeper_status
+    */
     let url = getEndpointUrl(-1);
     let req = new Request(url, { method: 'GET' });
 
